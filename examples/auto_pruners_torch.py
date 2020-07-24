@@ -66,7 +66,7 @@ def get_data(dataset, data_dir, batch_size, test_batch_size):
         normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
                                          std=[0.229, 0.224, 0.225])
         train_loader = torch.utils.data.DataLoader(
-            datasets.ImageFolder(os.path.join(ata_dir, 'train'),
+            datasets.ImageFolder(os.path.join(data_dir, 'train'),
                                  transform=transforms.Compose([
                                      transforms.RandomResizedCrop(224),
                                      transforms.RandomHorizontalFlip(),
