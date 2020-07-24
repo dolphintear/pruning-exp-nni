@@ -14,7 +14,7 @@ from torchvision import datasets, transforms
 from models.mnist.lenet import LeNet
 from models.cifar10.vgg import VGG
 from models.cifar10.resnet import ResNet18, ResNet50
-from nni.compression.torch import L1FilterPruner, L2FilterPruner, ActivationMeanRankFilterPruner, ActivationAPoZRankFilterPruner
+from nni.compression.torch import L1FilterPruner, L2FilterPruner, FPGMPruner, ActivationMeanRankFilterPruner, ActivationAPoZRankFilterPruner
 from nni.compression.torch import SimulatedAnnealingPruner, ADMMPruner, NetAdaptPruner, AutoCompressPruner
 from nni.compression.torch import ModelSpeedup
 from nni.compression.torch.utils.counter import count_flops_params
@@ -251,6 +251,8 @@ def main(args):
         pruner = L1FilterPruner(model, config_list)
     elif args.pruner == 'L2FilterPruner':
         pruner = L2FilterPruner(model, config_list)
+    elif args.pruner == 'FPGMPruner':
+        pruner = FPGMPruner(model, config_list)
     elif args.pruner == 'ActivationMeanRankFilterPruner':
         pruner = ActivationMeanRankFilterPruner(model, config_list)
     elif args.pruner == 'ActivationAPoZRankFilterPruner':
