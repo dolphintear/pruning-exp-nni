@@ -7,3 +7,4 @@ setup.pye
 *.pth
 
 examples/token.txt
+data/

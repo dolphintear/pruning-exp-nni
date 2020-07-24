@@ -3,9 +3,9 @@ name: L1Filter_cifar10_resnet18_0975_
 type: job
 jobRetryCount: 0
 prerequisites:
-  - type: dockerimage
+  - name: docker_image_0
+    type: dockerimage
     uri: 'gusui/nni:autopruners'
-    name: docker_image_0
 taskRoles:
   taskrole:
     instances: 1

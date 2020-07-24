@@ -87,7 +87,7 @@ def plot_performance_comparison(args, normalize=False):
         }
     }
     target_sparsities = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.95, 0.975]
-    pruners = ['L1FilterPruner', 'NetAdaptPruner', 'SimulatedAnnealingPruner', 'AutoCompressPruner']
+    pruners = ['L1FilterPruner', 'L2FilterPruner', 'NetAdaptPruner', 'SimulatedAnnealingPruner', 'AutoCompressPruner']
     
     performances = {}
     flops = {}
