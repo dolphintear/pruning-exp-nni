@@ -42,21 +42,21 @@ def submit_job(prefix, model, pruner, sparsity, pretrain_epochs, fine_tune_epoch
 
 
 if __name__ == '__main__':
-    models = ['vgg16']
-    pruners = ['SimulatedAnnealingPruner']
-    sparsities = ['0.1', '0.2', '0.3', '0.4', '0.5', '0.6', '0.7', '0.8', '0.9', '0.95', '0.975']
-    for model in models:
-        for pruner in pruners:
-            for sparsity in sparsities:
-                submit_job('_0724', model, pruner, sparsity, pretrain_epochs=100, fine_tune_epochs=100)
-
-    # models = ['resnet18']
-    # pruners = ['SimulatedAnnealingPruner']#'ActivationMeanRankFilterPruner', 'ActivationAPoZRankFilterPruner']#'L1FilterPruner', , 'NetAdaptPruner', 'AutoCompressPruner']
+    # models = ['vgg16']
+    # pruners = ['SimulatedAnnealingPruner']
     # sparsities = ['0.1', '0.2', '0.3', '0.4', '0.5', '0.6', '0.7', '0.8', '0.9', '0.95', '0.975']
     # for model in models:
     #     for pruner in pruners:
     #         for sparsity in sparsities:
-    #             submit_job('0724', model, pruner, sparsity, pretrain_epochs=200, fine_tune_epochs=200)
+    #             submit_job('_0724', model, pruner, sparsity, pretrain_epochs=100, fine_tune_epochs=100)
+
+    models = ['resnet18']
+    pruners = ['SimulatedAnnealingPruner']#'ActivationMeanRankFilterPruner', 'ActivationAPoZRankFilterPruner']#'L1FilterPruner', , 'NetAdaptPruner', 'AutoCompressPruner']
+    sparsities = ['0.1', '0.2', '0.3', '0.4', '0.5', '0.6', '0.7', '0.8', '0.9', '0.95', '0.975']
+    for model in models:
+        for pruner in pruners:
+            for sparsity in sparsities:
+                submit_job('_0724', model, pruner, sparsity, pretrain_epochs=200, fine_tune_epochs=200)
 
     # models = ['resnet50']
     # pruners = ['L1FilterPruner']

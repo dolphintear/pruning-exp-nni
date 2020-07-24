@@ -20,70 +20,70 @@ from nni.compression.torch import ModelSpeedup
 from nni.compression.torch.utils.counter import count_flops_params
 
 
-def get_data(args):
+def get_data(dataset, data_dir, batch_size, test_batch_size):
     '''
     get data
     '''
     kwargs = {'num_workers': 1, 'pin_memory': True} if torch.cuda.is_available() else {
     }
 
-    if args.dataset == 'mnist':
+    if dataset == 'mnist':
         train_loader = torch.utils.data.DataLoader(
-            datasets.MNIST(args.data_dir, train=True, download=True,
+            datasets.MNIST(data_dir, train=True, download=True,
                            transform=transforms.Compose([
                                transforms.ToTensor(),
                                transforms.Normalize((0.1307,), (0.3081,))
                            ])),
-            batch_size=args.batch_size, shuffle=True, **kwargs)
+            batch_size=batch_size, shuffle=True, **kwargs)
         val_loader = torch.utils.data.DataLoader(
-            datasets.MNIST(args.data_dir, train=False,
+            datasets.MNIST(data_dir, train=False,
                            transform=transforms.Compose([
                                transforms.ToTensor(),
                                transforms.Normalize((0.1307,), (0.3081,))
                            ])),
-            batch_size=args.test_batch_size, shuffle=True, **kwargs)
+            batch_size=test_batch_size, shuffle=True, **kwargs)
         criterion = torch.nn.NLLLoss()
-    elif args.dataset == 'cifar10':
+    elif dataset == 'cifar10':
         normalize = transforms.Normalize(
             (0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010))
         train_loader = torch.utils.data.DataLoader(
-            datasets.CIFAR10(args.data_dir, train=True, transform=transforms.Compose([
+            datasets.CIFAR10(data_dir, train=True, transform=transforms.Compose([
                 transforms.RandomHorizontalFlip(),
                 transforms.RandomCrop(32, 4),
                 transforms.ToTensor(),
                 normalize,
             ]), download=True),
-            batch_size=args.batch_size, shuffle=True, **kwargs)
+            batch_size=batch_size, shuffle=True, **kwargs)
 
         val_loader = torch.utils.data.DataLoader(
-            datasets.CIFAR10(args.data_dir, train=False, transform=transforms.Compose([
+            datasets.CIFAR10(data_dir, train=False, transform=transforms.Compose([
                 transforms.ToTensor(),
                 normalize,
             ])),
-            batch_size=args.batch_size, shuffle=False, **kwargs)
+            batch_size=batch_size, shuffle=False, **kwargs)
         criterion = torch.nn.CrossEntropyLoss()
-    elif args.dataset == 'imagenet':
+    elif dataset == 'imagenet':
         normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
                                          std=[0.229, 0.224, 0.225])
         train_loader = torch.utils.data.DataLoader(
-            datasets.ImageFolder(os.path.join(args.data_dir, 'train'),
+            datasets.ImageFolder(os.path.join(ata_dir, 'train'),
                                  transform=transforms.Compose([
                                      transforms.RandomResizedCrop(224),
                                      transforms.RandomHorizontalFlip(),
                                      transforms.ToTensor(),
                                      normalize,
                                  ])),
-            batch_size=args.batch_size, shuffle=True, **kwargs)
+            batch_size=batch_size, shuffle=True, **kwargs)
 
         val_loader = torch.utils.data.DataLoader(
-            datasets.ImageFolder(os.path.join(args.data_dir, 'val'),
+            datasets.ImageFolder(os.path.join(data_dir, 'val'),
                                  transform=transforms.Compose([
                                      transforms.Resize(256),
                                      transforms.CenterCrop(224),
                                      transforms.ToTensor(),
                                      normalize,
                                  ])),
-            batch_size=args.test_batch_size, shuffle=True, **kwargs)
+            batch_size=test_batch_size, shuffle=True, **kwargs)
         criterion = torch.nn.CrossEntropyLoss()
 
     return train_loader, val_loader, criterion
@@ -184,9 +184,9 @@ def get_trained_model_optimizer(args, device, train_loader, val_loader, criterio
         print('Best acc:', best_acc)
         print('Best epoch:', best_epoch)
 
-    if args.save_model:
-        torch.save(model.state_dict(), os.path.join(args.experiment_data_dir, 'model_trained.pth'))
-        print('Model trained saved to %s', args.experiment_data_dir)
+        if args.save_model:
+            torch.save(state_dict, os.path.join(args.experiment_data_dir, 'model_trained.pth'))
+            print('Model trained saved to %s', args.experiment_data_dir)
 
     return model, optimizer
 
@@ -211,7 +211,7 @@ def main(args):
     # prepare dataset
     torch.manual_seed(0)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    train_loader, val_loader, criterion = get_data(args)
+    train_loader, val_loader, criterion = get_data(args.dataset, args.data_dir, args.batch_size, args.test_batch_size)
     model, optimizer = get_trained_model_optimizer(args, device, train_loader, val_loader, criterion)
 
     def short_term_fine_tuner(model, epochs=1):
@@ -377,12 +377,12 @@ def main(args):
 
 
 if __name__ == '__main__':
-    def str2bool(v):
-        if isinstance(v, bool):
-            return v
-        if v.lower() in ('yes', 'true', 't', 'y', '1'):
+    def str2bool(s):
+        if isinstance(s, bool):
+            return s
+        if s.lower() in ('yes', 'true', 't', 'y', '1'):
             return True
-        if v.lower() in ('no', 'false', 'f', 'n', '0'):
+        if s.lower() in ('no', 'false', 'f', 'n', '0'):
             return False
         raise argparse.ArgumentTypeError('Boolean value expected.')
 
