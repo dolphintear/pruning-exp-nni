@@ -84,10 +84,20 @@ def plot_performance_comparison(args, normalize=False):
                     'flops':12.2
                 }
             }
+        },
+        'AMCPruner':{
+            'cifar10':{
+                'resnet50':{
+                    'performance': 0.9381,
+                    'params':54.2,
+                    'flops':12.2
+                }
+            }
         }
     }
     target_sparsities = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.95, 0.975]
-    pruners = ['L1FilterPruner', 'L2FilterPruner', 'NetAdaptPruner', 'SimulatedAnnealingPruner', 'AutoCompressPruner']
+    pruners = ['L1FilterPruner', 'L2FilterPruner', 'FPGMPruner',
+    'NetAdaptPruner', 'SimulatedAnnealingPruner', 'AutoCompressPruner']
     
     performances = {}
     flops = {}
@@ -119,19 +129,19 @@ def plot_performance_comparison(args, normalize=False):
 
 
     for pruner in pruners:
-        axs[0].scatter(flops[pruner], performances[pruner], label=pruner)
-        axs[1].scatter(params[pruner], performances[pruner], label=pruner)
+        axs[0].scatter(params[pruner], performances[pruner], label=pruner)
+        axs[1].scatter(flops[pruner], performances[pruner], label=pruner)
         axs[2].scatter(sparsities[pruner], performances[pruner], label=pruner)
 
     if normalize:
         axs[0].annotate("original", (1, result['performance']['original']))
         axs[0].set_xscale('log')
     else:
-        # axs[0].annotate("original", (result['flops']['original'], result['performance']['original']))
-        axs[0].plot(result['flops']['original'], result['performance']['original'], 'rx', label='original')
-        axs[0].plot(result['flops']['original']/references['AutoCompressPruner']['cifar10'][args.model]['flops'], references['AutoCompressPruner']['cifar10'][args.model]['performance'], 'bx', label='AutoCompress Paper')
-    axs[0].set_title("performance v.s. FLOPS")
-    axs[0].set_xlabel("FLOPS (calculated after speedup)")
+        # axs[0].annotate("original", (result['params']['original'], result['performance']['original']))
+        axs[0].plot(result['params']['original'], result['performance']['original'], 'rx', label='original')
+        axs[0].plot(result['params']['original']/references['AutoCompressPruner']['cifar10'][args.model]['params'], references['AutoCompressPruner']['cifar10'][args.model]['performance'], 'bx', label='AutoCompress Paper')
+    axs[0].set_title("performance v.s. params")
+    axs[0].set_xlabel("number of weight parameters (calculated after speedup)")
     axs[0].set_ylabel('Accuracy after fine-tuning')
     axs[0].legend()
 
@@ -139,13 +149,14 @@ def plot_performance_comparison(args, normalize=False):
         axs[1].annotate("original", (1, result['performance']['original']))
         axs[1].set_xscale('log')
     else:
-        # axs[1].annotate("original", (result['params']['original'], result['performance']['original']))
-        axs[1].plot(result['params']['original'], result['performance']['original'], 'rx', label='original')
-        axs[1].plot(result['params']['original']/references['AutoCompressPruner']['cifar10'][args.model]['params'], references['AutoCompressPruner']['cifar10'][args.model]['performance'], 'bx', label='AutoCompress Paper')
-    axs[1].set_title("performance v.s. params")
-    axs[1].set_xlabel("number of weight parameters (calculated after speedup)")
+        # axs[0].annotate("original", (result['flops']['original'], result['performance']['original']))
+        axs[1].plot(result['flops']['original'], result['performance']['original'], 'rx', label='original')
+        axs[1].plot(result['flops']['original']/references['AutoCompressPruner']['cifar10'][args.model]['flops'], references['AutoCompressPruner']['cifar10'][args.model]['performance'], 'bx', label='AutoCompress Paper')
+    axs[1].set_title("performance v.s. FLOPS")
+    axs[1].set_xlabel("FLOPS (calculated after speedup)")
     axs[1].set_ylabel('Accuracy after fine-tuning')
     axs[1].legend()
+
 
     # axs[2].annotate("original", (0, result['performance']['original']))
     axs[2].hlines(result['performance']['original'], sparsities[pruner][0], sparsities[pruner][-1], linestyles='dashed', label='original model')

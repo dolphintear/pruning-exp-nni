@@ -1,0 +1,1 @@
+{"config_list": "[{\"op_types\": [\"Conv2d\"], \"sparsity\": 0.4069189591841264, \"op_names\": [\"layer4.0.conv1\"]}, {\"op_names\": [\"layer4.0.conv3\"], \"sparsity\": 0.37300904591878253, \"op_types\": [\"Conv2d\"]}]", "performance": 0.9491}
